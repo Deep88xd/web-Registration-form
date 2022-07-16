@@ -25,7 +25,7 @@ const auth = async (req, res, next) => {
     console.log(` this is req.token from auth.js ${req.token}`);
     next();
   } catch (error) {
-    res.status(401).send("Login the page first");
+    res.status(401).render("home");
   }
 };
 module.exports = auth;

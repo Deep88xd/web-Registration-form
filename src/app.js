@@ -97,7 +97,7 @@ app.post("/register", async (req, res) => {
       const register = await registered.save();
       console.log("registered Document is");
       console.log(register);
-      res.status(201).render("home");
+      res.status(201).render("index");
     } else {
       res.send("password are not matching");
     }
@@ -160,7 +160,7 @@ app.post("/login", async (req, res) => {
       const register = await userDocument.save();
       console.log("registered Document with browser token while login is");
       console.log(register);
-      res.render("home");
+      res.render("index");
     } else {
       res.send("Invalid password details");
     }
