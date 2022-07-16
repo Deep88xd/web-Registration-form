@@ -7,10 +7,9 @@ const bcrypt = require("bcryptjs");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const auth = require("./middleware/auth");
+require(`./db/connection`);
 
 const port = process.env.PORT || 8000;
-
-require(`./db/connection`);
 
 const Register = require("./models/registers");
 
@@ -32,10 +31,6 @@ app.get("/", (req, res) => {
 /*----------------------------------------------------------------------------------------------------------------------------*/
 /*To visit premium page */
 
-/*go through the Authentication process */
-/* get token from browser when user visit to new page*/
-// in auth.js getting document data from database with the help of browser token
-//  if document present in the database give access to render the premium page.
 app.get("/premium", auth, (req, res) => {
   console.log(
     `this is the token generated when we visit the premium page ${req.cookies.jwt}`
@@ -57,9 +52,7 @@ app.post("/register", async (req, res) => {
     console.log(`the password value from form field is ${password}`);
 
     if (password === cpassword) {
-      // <----- when password === cpassword ,after submit  --------->
-      // <----- All entered value stored in registered variable --------->
-      // <----- Register Schema is used to converts All stored data into A document  ------>
+ 
       const registered = new Register({
         firstname: req.body.firstname,
         lastname: req.body.lastname,
@@ -71,9 +64,7 @@ app.post("/register", async (req, res) => {
       /*----------------------------------------------------------------------------------------------------------------------------*/
 
       /*----------------------------------------------------------------------------------------------------------------------------*/
-      /* JWT token generation while registration process */
-      /* before rendering the home page generate token while registration process */
-      /*call generateAuthToken user define function in app.js and define in register.js (app.js <=> register.js) */
+     
       const registrationToken = await registered.generateAuthToken();
       console.log(
         ` the generated token while registration process is ${registrationToken}`
@@ -87,9 +78,7 @@ app.post("/register", async (req, res) => {
         secure: true,
       });
       /*-------------------------------------------------------------------------------------------------*/
-      /*----------------------------------------------------------------------------------------------------------------------------*/
-
-      /*----------------------------------------------------------------------------------------------------------------------------*/
+     
       /* secure your password with hashing technique. */
       // before save data in database secure your password with hashing technique. in register.js.
       /*-----------------------------------------------------------------------------------------------------------------------------*/
@@ -117,12 +106,11 @@ app.get("/login", (req, res) => {
 
 app.post("/login", async (req, res) => {
   try {
-    // get email & password value from the browser.
+    // get email & password value from the form body.
     const email = req.body.email;
     const password = req.body.password;
 
-    // <----- find Document with the help of entered email in browser .  ------->
-
+  
     const userDocument = await Register.findOne({ email: email });
 
     /*---------------------------------------------------------------------------------------------------------------------------*/
@@ -136,12 +124,12 @@ app.post("/login", async (req, res) => {
     /* call generateAuthToken user define function in app.js and define in register.js (app.js <=> register.js) */
     const loginToken = await userDocument.generateAuthToken();
     console.log(` the generated token while login process is ${loginToken}`);
-    /*------------------------------------------------------------------------------------------------------*/
+    
 
     /*------------------------------------------------------------------------------------------------------*/
     /*Add secret key or sensitive data in .env file*/
 
-    /*------------------------------------------------------------------------------------------------------*/
+   
 
     /*------------------------------------------------------------------------------------------------------*/
     /* store token in cookies after submit the login page */
@@ -153,10 +141,6 @@ app.post("/login", async (req, res) => {
     /*------------------------------------------------------------------------------------------------------*/
 
     if (isMatch) {
-      /*----------------------------------------------------------------------------------------------------------------------------*/
-
-      // if(userDocument.password === cpassword);
-
       const register = await userDocument.save();
       console.log("registered Document with browser token while login is");
       console.log(register);
@@ -176,7 +160,7 @@ app.post("/login", async (req, res) => {
 //  1. delete only current token from browser and database.
 //  2. delete all active token from other devices and database.
 
-//  1. delete token only from current  browser and database.
+//  1. delete token only from current browser and database.
 app.get("/logout", auth, async (req, res) => {
   try {
     // we are getting user document from auth.js  using req.user in app.js
@@ -211,7 +195,7 @@ app.get("/logout", auth, async (req, res) => {
     // req.user.tokens = [];
     /*----------------------------------------------------------------------------------*/
 
-    res.clearCookie("jwt"); /*--------------------------*/
+    res.clearCookie("jwt"); 
 
     console.log("logout successfull");
 
@@ -228,14 +212,3 @@ app.listen(port, () => {
   console.log(`connected with the port no. ${port}`);
 });
 
-// mongoose
-//   .connect(process.env.DATABASE_URL)
-//   .then(() => {
-//     app.listen(pot, () => {
-//       console.log(`Connecting to the server at port no. ${port}`);
-//     });
-//   })
-//   .catch((error) => {
-//     console.log(error);
-//   }); 
-     
